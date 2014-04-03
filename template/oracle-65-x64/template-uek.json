@@ -1,0 +1,65 @@
+{
+  "variables": {
+    "iso_url": "http://mirrors.dotsrc.org/oracle-linux/OL6/U5/x86_64/OracleLinux-R6-U5-Server-x86_64-dvd.iso",
+    "iso_checksum": "a65041fbe0ba67e3ff6f5f93804a8f47d5b5f132",
+    "uek": "yes"
+  },
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "{{ user `iso_url` }}",
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "iso_checksum_type": "sha1",
+      "boot_wait": "5s",
+      "boot_command": [
+        "<tab> text ",
+        "ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg ",
+        "hostname=oracle-uek-65-x64.vagrantup.com ",
+        "<enter><wait>"
+      ],
+      "shutdown_command": "echo 'vagrant' | sudo -S shutdown -P now",
+      "http_directory": "http",
+      "ssh_wait_timeout": "20m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "virtualbox_version_file": ".vbox_version",
+      "guest_os_type": "Oracle_64",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "script": "scripts/kernel.sh",
+      "environment_vars": [
+        "UEK={{ user `uek` }}"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "script": "scripts/epel.sh"
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "script": "scripts/virtualbox.sh",
+      "environment_vars": [
+        "UEK={{ user `uek` }}"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "script": "scripts/cleanup.sh"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "../../{{.Provider}}/oracle-uek-65-x64.box"
+    }
+  ]
+}
