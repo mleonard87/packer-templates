@@ -23,7 +23,9 @@
       "type": "shell",
       "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
       "scripts": [
+        "scripts/dkms.sh",
         "scripts/virtualbox.sh",
+        "scripts/public-yum.sh",
         "scripts/cleanup.sh"
       ]
     }
