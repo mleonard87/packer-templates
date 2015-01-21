@@ -1,10 +1,14 @@
 {
+  "variables": {
+    "iso_location": "",
+    "iso_md5_checksum": ""
+  },
   "builders": [
     {
       "name": "oracle-linux-70-uek",
       "type": "virtualbox-iso",
-      "iso_url": "file:///Users/michael/Downloads/V46135-01.iso",
-      "iso_checksum": "10dafd94332a2dcb083be1093b840779",
+      "iso_url": "{{user `iso_location`}}",
+      "iso_checksum": "{{user `iso_md5_checksum`}}",
       "iso_checksum_type": "md5",
       "boot_command": [
         "<up><wait><tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
@@ -21,8 +25,8 @@
     {
       "name": "oracle-linux-70-rhck",
       "type": "virtualbox-iso",
-      "iso_url": "file:///Users/michael/Downloads/V46135-01.iso",
-      "iso_checksum": "10dafd94332a2dcb083be1093b840779",
+      "iso_url": "{{user `iso_location`}}",
+      "iso_checksum": "{{user `iso_md5_checksum`}}",
       "iso_checksum_type": "md5",
       "boot_command": [
         "<up><wait><tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
