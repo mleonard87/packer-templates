@@ -1,10 +1,29 @@
 {
   "builders": [
     {
+      "name": "oracle-linux-70-uek",
       "type": "virtualbox-iso",
-      "iso_url": "http://mirrors.dotsrc.org/oracle-linux/OL7/U0/x86_64/OracleLinux-R7-U0-Server-x86_64-dvd.iso",
-      "iso_checksum": "74bcac408a164535ecd483503244e312a292bf84",
-      "iso_checksum_type": "sha1",
+      "iso_url": "file:///Users/michael/Downloads/V46135-01.iso",
+      "iso_checksum": "10dafd94332a2dcb083be1093b840779",
+      "iso_checksum_type": "md5",
+      "boot_command": [
+        "<up><wait><tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
+      ],
+      "shutdown_command": "echo 'vagrant' | sudo -S shutdown -P now",
+      "http_directory": "http",
+      "ssh_wait_timeout": "20m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "virtualbox_version_file": ".vbox_version",
+      "guest_os_type": "Oracle_64",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso"
+    },
+    {
+      "name": "oracle-linux-70-rhck",
+      "type": "virtualbox-iso",
+      "iso_url": "file:///Users/michael/Downloads/V46135-01.iso",
+      "iso_checksum": "10dafd94332a2dcb083be1093b840779",
+      "iso_checksum_type": "md5",
       "boot_command": [
         "<up><wait><tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
       ],
@@ -21,20 +40,41 @@
   "provisioners": [
     {
       "type": "shell",
+      "only": ["oracle-linux-70-uek"],
       "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
       "scripts": [
         "scripts/dkms.sh",
         "scripts/virtualbox.sh",
         "scripts/public-yum.sh",
-        "scripts/cleanup.sh"
+        "scripts/cleanup.sh",
+        "scripts/kernel_uek.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "only": ["oracle-linux-70-rhck"],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "scripts": [
+        "scripts/dkms.sh",
+        "scripts/virtualbox.sh",
+        "scripts/public-yum.sh",
+        "scripts/cleanup.sh",
+        "scripts/kernel_rhck.sh"
       ]
     }
   ],
   "post-processors": [
     {
       "type": "vagrant",
+      "only": ["oracle-linux-70-uek"],
       "keep_input_artifact": false,
-      "output": "../../{{.Provider}}/OracleLinux-R7-U0-Server-x86_64.box"
+      "output": "../../{{.Provider}}/OracleLinux-R7-U0-Server-x86_64-uek.box"
+    },
+    {
+      "type": "vagrant",
+      "only": ["oracle-linux-70-rhck"],
+      "keep_input_artifact": false,
+      "output": "../../{{.Provider}}/OracleLinux-R7-U0-Server-x86_64-rhck.box"
     }
   ]
 }
