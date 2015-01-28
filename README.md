@@ -5,6 +5,6 @@ A collection of [Packer](https://packer.io/) templates I use for building [Vagra
 Boxes
 =====
 
-oracle-70-x64
--------------
+oracle-linux-70-x86_64
+----------------------
 Default installation of Oracle Linux 7. This provides two vagrant boxes, one using the Unbreakable Enterprise Kernel and the other using the Red Hat Compatible Kernel.
