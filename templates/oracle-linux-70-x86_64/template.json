@@ -51,6 +51,7 @@
         "scripts/virtualbox.sh",
         "scripts/public-yum.sh",
         "scripts/cleanup.sh",
+        "scripts/vagrant.sh",
         "scripts/kernel_uek.sh"
       ]
     },
@@ -63,6 +64,7 @@
         "scripts/virtualbox.sh",
         "scripts/public-yum.sh",
         "scripts/cleanup.sh",
+        "scripts/vagrant.sh",
         "scripts/kernel_rhck.sh"
       ]
     }
