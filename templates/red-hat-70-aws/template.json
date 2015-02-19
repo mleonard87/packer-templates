@@ -1,0 +1,37 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "ssh_port": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "ssh_timeout": "5m",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "ap-southeast-2",
+    "source_ami": "ami-33384e09",
+    "instance_type": "m3.xlarge",
+    "ssh_username": "ec2-user",
+    "ami_name": "RHEL 7.0 {{timestamp}}"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sleep 10",
+      "sudo sed -i \"s/Defaults    requiretty/#Defaults    requiretty/g\" /etc/sudoers",
+      "sudo sed -i \"s/#PermitRootLogin yes/PermitRootLogin no/g\" /etc/ssh/sshd_config",
+      "sudo sed -i \"s/#Port 22/Port {{user `ssh_port`}}/g\" /etc/ssh/sshd_config",
+      "sudo sed -i \"s/#IgnoreRhosts yes/IgnoreRhosts yes/g\" /etc/ssh/sshd_config",
+      "sudo sed -i \"s/#HostbasedAuthentication no/HostbasedAuthentication no/g\" /etc/ssh/sshd_config",
+      "sudo semanage port -a -t ssh_port_t -p tcp {{user `ssh_port`}}",
+      "sudo systemctl restart sshd"
+    ]
+  }],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "output": "../../{{.Provider}}/RHEL-7.0-x86_64-AWS.box"
+    }
+  ]
+}
