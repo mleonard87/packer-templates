@@ -1,7 +1,9 @@
 {
   "variables": {
     "iso_location": "",
-    "iso_md5_checksum": ""
+    "iso_md5_checksum": "",
+    "aws_access_key": "",
+    "aws_secret_key": ""
   },
   "builders": [
     {
@@ -39,6 +41,17 @@
       "virtualbox_version_file": ".vbox_version",
       "guest_os_type": "Oracle_64",
       "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso"
+    },
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "ap-southeast-2",
+      "source_ami": "",
+      "instance_type": "m3.large",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ami_name": "packer-test {{timestamp}}"
     }
   ],
   "provisioners": [

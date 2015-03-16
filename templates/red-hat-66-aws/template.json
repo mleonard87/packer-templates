@@ -10,10 +10,10 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "ap-southeast-2",
-    "source_ami": "ami-33384e09",
+    "source_ami": "ami-55e38e6f",
     "instance_type": "m3.xlarge",
     "ssh_username": "ec2-user",
-    "ami_name": "RHEL 7.0 {{timestamp}}"
+    "ami_name": "RHEL 6.6 {{timestamp}}"
   }],
   "provisioners": [{
     "type": "shell",
@@ -24,14 +24,16 @@
       "sudo sed -i \"s/#Port 22/Port {{user `ssh_port`}}/g\" /etc/ssh/sshd_config",
       "sudo sed -i \"s/#IgnoreRhosts yes/IgnoreRhosts yes/g\" /etc/ssh/sshd_config",
       "sudo sed -i \"s/#HostbasedAuthentication no/HostbasedAuthentication no/g\" /etc/ssh/sshd_config",
-      "sudo semanage port -a -t ssh_port_t -p tcp {{user `ssh_port`}}",
-      "sudo systemctl restart sshd"
+      "sudo iptables -A INPUT -p tcp --dport {{user `ssh_port`}} -j ACCEPT",
+      "sudo iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP",
+      "sudo iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP",
+      "sudo iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP"
     ]
   }],
   "post-processors": [
     {
       "type": "vagrant",
-      "output": "../../{{.Provider}}/RHEL-7.0-x86_64-AWS.box"
+      "output": "../../{{.Provider}}/RHEL-6.6-x86_64-AWS.box"
     }
   ]
 }
